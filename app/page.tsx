@@ -41,7 +41,7 @@ export default async function DashboardPage() {
           Cross-chain TVL dashboard
         </h1>
         <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-          Total value locked across every chain DefiLlama tracks, updated every few minutes.
+          Total value locked across every major blockchain, updated every few minutes.
         </p>
       </div>
 
