@@ -32,7 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           <nav className="max-w-6xl mx-auto flex items-center gap-6 px-6 py-4">
             <Link href="/" className="font-semibold text-lg" style={{ color: "var(--text-primary)" }}>
-              BlockchainTVL
+              ChainTVL
             </Link>
             <Link href="/" className="text-sm" style={{ color: "var(--text-secondary)" }}>
               Dashboard
