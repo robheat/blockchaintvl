@@ -75,8 +75,8 @@ export function ChainTable({ chains }: { chains: ChainSummary[] }) {
     <div className="viz-card overflow-x-auto">
       <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
         <thead>
-          <tr style={{ borderBottom: "1px solid var(--gridline)" }}>
-            <th className="py-2 px-3 text-left text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-secondary)" }}>
+          <tr style={{ borderBottom: "1px solid var(--gridline)", background: "var(--surface-2)" }}>
+            <th className="py-2.5 px-3 text-left text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-secondary)" }}>
               Chain
             </th>
             <Header sortKeyValue="tvl" activeSortKey={sortKey} descending={descending} onToggle={toggleSort}>
@@ -102,22 +102,33 @@ export function ChainTable({ chains }: { chains: ChainSummary[] }) {
             <tr
               key={chain.slug}
               style={{ borderBottom: "1px solid var(--gridline)" }}
-              className="hover:opacity-80 transition-opacity"
+              className="transition-colors hover:bg-[var(--surface-2)]"
             >
-              <td className="py-2 px-3">
-                <Link href={`/chain/${chain.slug}`} className="font-medium" style={{ color: "var(--text-primary)" }}>
-                  {chain.name}
+              <td className="py-3 px-3">
+                <Link href={`/chain/${chain.slug}`} className="group flex items-center gap-2.5">
+                  <span
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold"
+                    style={{ background: "var(--surface-2)", color: "var(--text-secondary)" }}
+                  >
+                    {chain.name.charAt(0).toUpperCase()}
+                  </span>
+                  <span
+                    className="font-medium transition-colors group-hover:text-[var(--accent)]"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    {chain.name}
+                  </span>
                 </Link>
               </td>
-              <td className="py-2 px-3 text-right tabular-nums" style={{ color: "var(--text-primary)" }}>
+              <td className="py-3 px-3 text-right tabular-nums" style={{ color: "var(--text-primary)" }}>
                 {formatUsdCompact(chain.tvl)}
               </td>
               {WINDOWS.map((w) => (
-                <td key={w} className="py-2 px-3 text-right tabular-nums">
+                <td key={w} className="py-3 px-3 text-right tabular-nums">
                   <DeltaCell value={chain.tvlChange[w]} />
                 </td>
               ))}
-              <td className="py-2 px-3 text-right tabular-nums" style={{ color: "var(--text-secondary)" }}>
+              <td className="py-3 px-3 text-right tabular-nums" style={{ color: "var(--text-secondary)" }}>
                 {chain.stablecoinSupply > 0 ? formatUsdCompact(chain.stablecoinSupply) : "—"}
               </td>
             </tr>

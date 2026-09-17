@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ArrowsLeftRight, ChartBar } from "@phosphor-icons/react/ssr";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -56,23 +57,46 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <header
-          className="border-b sticky top-0 z-10"
-          style={{ borderColor: "var(--gridline)", background: "var(--background)" }}
+          className="border-b sticky top-0 z-10 backdrop-blur-md"
+          style={{ borderColor: "var(--gridline)", background: "rgba(8, 9, 11, 0.72)" }}
         >
-          <nav className="max-w-6xl mx-auto flex items-center gap-6 px-6 py-4">
-            <Link href="/" className="font-semibold text-lg" style={{ color: "var(--text-primary)" }}>
-              ChainTVL
+          <nav className="max-w-6xl mx-auto flex items-center gap-8 px-6 py-3.5">
+            <Link href="/" className="flex items-center gap-2">
+              <span
+                className="flex h-7 w-7 items-center justify-center rounded-lg"
+                style={{ background: "var(--accent-wash)" }}
+              >
+                <ArrowsLeftRight size={16} weight="bold" color="var(--accent)" />
+              </span>
+              <span className="font-semibold text-[15px] tracking-tight" style={{ color: "var(--text-primary)" }}>
+                Chain<span style={{ color: "var(--accent)" }}>TVL</span>
+              </span>
             </Link>
-            <Link href="/" className="text-sm" style={{ color: "var(--text-secondary)" }}>
-              Dashboard
-            </Link>
-            <Link href="/flows" className="text-sm" style={{ color: "var(--text-secondary)" }}>
-              Flows
-            </Link>
+            <div className="flex items-center gap-5">
+              <Link
+                href="/"
+                className="flex items-center gap-1.5 text-sm transition-colors hover:text-[var(--text-primary)]"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                <ChartBar size={15} weight="bold" />
+                Dashboard
+              </Link>
+              <Link
+                href="/flows"
+                className="flex items-center gap-1.5 text-sm transition-colors hover:text-[var(--text-primary)]"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                <ArrowsLeftRight size={15} weight="bold" />
+                Flows
+              </Link>
+            </div>
           </nav>
         </header>
         <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-8">{children}</main>
-        <footer className="text-xs px-6 py-6 text-center" style={{ color: "var(--text-muted)" }}>
+        <footer
+          className="text-xs px-6 py-6 text-center border-t"
+          style={{ color: "var(--text-muted)", borderColor: "var(--gridline)" }}
+        >
           Data from DefiLlama. TVL and stablecoin-supply figures are free-tier data; cross-chain
           &ldquo;flows&rdquo; are a modeled reallocation, not literal bridge-transaction routes.
         </footer>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { TrendDown, TrendUp } from "@phosphor-icons/react/ssr";
 import { getFlowChangeMetrics, WINDOWS, type Window, type FlowMetric } from "@/lib/chains";
 import { computeReallocation } from "@/lib/flows";
 import { FlowSankey } from "@/components/FlowSankey";
@@ -35,12 +36,21 @@ function FilterPill({ href, active, children }: { href: string; active: boolean;
   return (
     <Link
       href={href}
-      className="text-sm px-3 py-1.5 rounded-full border transition-colors"
-      style={{
-        borderColor: active ? "var(--flow-inflow)" : "var(--border-hairline)",
-        color: active ? "var(--text-primary)" : "var(--text-secondary)",
-        background: active ? "var(--series-tvl-wash)" : "transparent",
-      }}
+      className="text-sm px-3.5 py-1.5 rounded-full border transition-colors"
+      style={
+        active
+          ? {
+              borderColor: "var(--accent)",
+              color: "var(--text-primary)",
+              background: "var(--accent-wash)",
+              fontWeight: 600,
+            }
+          : {
+              borderColor: "var(--border-hairline)",
+              color: "var(--text-secondary)",
+              background: "var(--surface-1)",
+            }
+      }
     >
       {children}
     </Link>
@@ -62,14 +72,15 @@ export default async function FlowsPage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>
+        <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "var(--text-primary)" }}>
           Cross-chain flows
         </h1>
         <p className="text-sm mt-1 max-w-2xl" style={{ color: "var(--text-secondary)" }}>
           Chains losing share on the left, chains gaining share on the right. Link widths are a{" "}
-          <strong>modeled reallocation</strong> of the net change — not literal bridge-transaction
-          routes, since DefiLlama&apos;s bridge-volume API now requires a paid plan. Widths are
-          proportional to each chain&apos;s share of total outflow / inflow for the window.
+          <strong style={{ color: "var(--text-primary)" }}>modeled reallocation</strong> of the net
+          change, not literal bridge-transaction routes, since DefiLlama&apos;s bridge-volume API now
+          requires a paid plan. Widths are proportional to each chain&apos;s share of total outflow and
+          inflow for the window.
         </p>
       </div>
 
@@ -95,16 +106,32 @@ export default async function FlowsPage({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm" style={{ color: "var(--text-secondary)" }}>
-        <div className="viz-card p-4">
-          <div style={{ color: "var(--text-muted)" }}>Total outflow (losing chains)</div>
-          <div className="text-lg font-semibold" style={{ color: "var(--flow-outflow)" }}>
-            {formatUsdCompact(totalOutflow)}
+        <div className="viz-card p-4 flex items-center gap-3">
+          <span
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+            style={{ background: "rgba(230, 103, 103, 0.12)" }}
+          >
+            <TrendDown size={18} weight="bold" color="var(--flow-outflow)" />
+          </span>
+          <div>
+            <div style={{ color: "var(--text-muted)" }}>Total outflow (losing chains)</div>
+            <div className="text-lg font-semibold" style={{ color: "var(--flow-outflow)" }}>
+              {formatUsdCompact(totalOutflow)}
+            </div>
           </div>
         </div>
-        <div className="viz-card p-4">
-          <div style={{ color: "var(--text-muted)" }}>Total inflow (gaining chains)</div>
-          <div className="text-lg font-semibold" style={{ color: "var(--flow-inflow)" }}>
-            {formatUsdCompact(totalInflow)}
+        <div className="viz-card p-4 flex items-center gap-3">
+          <span
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+            style={{ background: "var(--accent-wash)" }}
+          >
+            <TrendUp size={18} weight="bold" color="var(--flow-inflow)" />
+          </span>
+          <div>
+            <div style={{ color: "var(--text-muted)" }}>Total inflow (gaining chains)</div>
+            <div className="text-lg font-semibold" style={{ color: "var(--flow-inflow)" }}>
+              {formatUsdCompact(totalInflow)}
+            </div>
           </div>
         </div>
       </div>

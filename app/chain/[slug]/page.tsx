@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Coins, CurrencyCircleDollar } from "@phosphor-icons/react/ssr";
 import { getChainDetail } from "@/lib/chains";
 import { TrendChart } from "@/components/TrendChart";
 import { StatTile } from "@/components/StatTile";
@@ -44,17 +45,21 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <span className="text-sm" style={{ color: "var(--text-muted)" }}>
+        <span
+          className="inline-block text-xs font-medium px-2 py-0.5 rounded-full mb-2"
+          style={{ color: "var(--text-secondary)", background: "var(--surface-2)" }}
+        >
           Rank #{chain.rank} by TVL
         </span>
-        <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>
+        <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "var(--text-primary)" }}>
           {chain.name}
         </h1>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <StatTile label="Total value locked" value={formatUsdCompact(chain.tvl)} />
+        <StatTile icon={Coins} label="Total value locked" value={formatUsdCompact(chain.tvl)} />
         <StatTile
+          icon={CurrencyCircleDollar}
           label="Stablecoin supply"
           value={chain.stablecoinSupply > 0 ? formatUsdCompact(chain.stablecoinSupply) : "No data"}
         />

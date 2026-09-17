@@ -1,3 +1,4 @@
+import { Coins, CurrencyCircleDollar, TrendUp } from "@phosphor-icons/react/ssr";
 import { getGlobalTvlHistory } from "@/lib/defillama";
 import { getTopChainSummaries } from "@/lib/chains";
 import { StatTile } from "@/components/StatTile";
@@ -36,29 +37,44 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>
-          Cross-chain TVL dashboard
-        </h1>
-        <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-          Total value locked across every major blockchain, updated every few minutes.
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "var(--text-primary)" }}>
+            Cross-chain TVL dashboard
+          </h1>
+          <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
+            Total value locked across every major blockchain, updated every few minutes.
+          </p>
+        </div>
+        <div
+          className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full"
+          style={{ color: "var(--delta-good)", background: "rgba(12, 163, 12, 0.12)" }}
+        >
+          <span className="live-dot" style={{ background: "var(--delta-good)" }} />
+          Live
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatTile
+          icon={Coins}
           label="Total DeFi TVL"
           value={latestGlobal ? formatUsdCompact(latestGlobal.tvl) : "—"}
           delta={change24h}
           deltaLabel="24h"
         />
         <StatTile
+          icon={TrendUp}
           label="7-day change"
           value={change7dAbs !== null ? formatUsdCompact(change7dAbs) : "—"}
           delta={change7d}
           deltaLabel="7d"
         />
-        <StatTile label="Tracked stablecoin supply (top chains)" value={formatUsdCompact(totalStablecoin)} />
+        <StatTile
+          icon={CurrencyCircleDollar}
+          label="Tracked stablecoin supply (top chains)"
+          value={formatUsdCompact(totalStablecoin)}
+        />
       </div>
 
       <div>
