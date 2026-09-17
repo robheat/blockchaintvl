@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getFlowChangeMetrics, WINDOWS, type Window, type FlowMetric } from "@/lib/chains";
 import { computeReallocation } from "@/lib/flows";
@@ -5,6 +6,17 @@ import { FlowSankey } from "@/components/FlowSankey";
 import { formatUsdCompact } from "@/lib/format";
 
 export const revalidate = 900;
+
+const flowsTitle = "Cross-Chain Flows";
+const flowsDescription =
+  "See which blockchains are gaining and losing TVL and stablecoin supply, visualized as a cross-chain capital flow diagram. Filter by 24h, 7d, or 30d.";
+
+export const metadata: Metadata = {
+  title: flowsTitle,
+  description: flowsDescription,
+  openGraph: { title: flowsTitle, description: flowsDescription },
+  twitter: { card: "summary_large_image", title: flowsTitle, description: flowsDescription },
+};
 
 const METRICS: { key: FlowMetric; label: string }[] = [
   { key: "tvl", label: "TVL" },

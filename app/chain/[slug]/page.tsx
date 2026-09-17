@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getChainDetail } from "@/lib/chains";
 import { TrendChart } from "@/components/TrendChart";
@@ -5,6 +6,32 @@ import { StatTile } from "@/components/StatTile";
 import { formatUsdCompact } from "@/lib/format";
 
 export const revalidate = 900;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const chain = await getChainDetail(slug);
+
+  if (!chain) {
+    return { title: "Chain not found" };
+  }
+
+  const stablecoinPart =
+    chain.stablecoinSupply > 0 ? `and ${formatUsdCompact(chain.stablecoinSupply)} in stablecoin supply ` : "";
+  const description = `${chain.name} has ${formatUsdCompact(chain.tvl)} in total value locked (rank #${chain.rank} by TVL) ${stablecoinPart}right now. See ${chain.name}'s historical TVL and stablecoin supply trends on ChainTVL.`;
+
+  const title = `${chain.name} TVL`;
+
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+    twitter: { card: "summary_large_image", title, description },
+  };
+}
 
 export default async function ChainDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

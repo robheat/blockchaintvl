@@ -13,10 +13,39 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteTitle = "ChainTVL — Cross-Chain TVL & Capital Flow Tracker";
+const siteDescription =
+  "Track total value locked (TVL) across every major blockchain and see where crypto capital is moving between chains. Live DeFi TVL rankings, stablecoin supply trends, and cross-chain flow charts for Ethereum, Solana, Base, Tron, BSC, and more.";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.chaintvl.com"),
-  title: "ChainTVL",
-  description: "Where crypto capital is moving between chains — TVL and stablecoin flow tracking.",
+  title: {
+    default: siteTitle,
+    template: "%s | ChainTVL",
+  },
+  description: siteDescription,
+  keywords: [
+    "TVL tracker",
+    "total value locked",
+    "cross-chain flows",
+    "DeFi TVL",
+    "blockchain TVL",
+    "stablecoin flows",
+    "crypto capital flows",
+    "bridge volume",
+  ],
+  openGraph: {
+    title: siteTitle,
+    description: siteDescription,
+    url: "https://www.chaintvl.com",
+    siteName: "ChainTVL",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
