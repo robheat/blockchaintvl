@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BlockchainTVL",
+  metadataBase: new URL("https://www.chaintvl.com"),
+  title: "ChainTVL",
   description: "Where crypto capital is moving between chains — TVL and stablecoin flow tracking.",
 };
 
