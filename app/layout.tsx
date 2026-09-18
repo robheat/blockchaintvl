@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ArrowsLeftRight, ChartBar } from "@phosphor-icons/react/ssr";
@@ -47,6 +47,10 @@ export const metadata: Metadata = {
     title: siteTitle,
     description: siteDescription,
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#08090b",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
