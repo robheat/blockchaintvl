@@ -63,7 +63,18 @@ export function FlowSankey({ nodes, links }: { nodes: FlowNode[]; links: FlowLin
 
   return (
     <div className="relative">
-      <svg viewBox={`0 0 ${WIDTH} ${height}`} className="w-full h-auto" role="img" aria-label="Modeled cross-chain flow diagram">
+      {/* Fixed pixel width, not viewBox-scaled: on narrow screens the SVG text
+          would otherwise shrink below readable size. Scroll horizontally
+          instead, same pattern as the chain table. */}
+      <div className="overflow-x-auto">
+        <svg
+          width={WIDTH}
+          height={height}
+          viewBox={`0 0 ${WIDTH} ${height}`}
+          style={{ minWidth: WIDTH }}
+          role="img"
+          aria-label="Modeled cross-chain flow diagram"
+        >
         <g>
           {graph.links.map((link, i) => {
             const source = link.source as LayoutNode;
@@ -128,7 +139,8 @@ export function FlowSankey({ nodes, links }: { nodes: FlowNode[]; links: FlowLin
             );
           })}
         </g>
-      </svg>
+        </svg>
+      </div>
       <div className="flex justify-between text-xs px-2" style={{ color: "var(--text-muted)" }}>
         <span>Losing share</span>
         <span>Gaining share</span>
