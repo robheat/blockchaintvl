@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { ChainSummary, Window } from "@/lib/chains";
 import { formatPercent, formatUsdCompact } from "@/lib/format";
+import { ChainIcon } from "@/components/ChainIcon";
 
 type SortKey = "tvl" | "24h" | "7d" | "30d" | "stablecoinSupply";
 
@@ -106,12 +107,7 @@ export function ChainTable({ chains }: { chains: ChainSummary[] }) {
             >
               <td className="py-3 px-3">
                 <Link href={`/chain/${chain.slug}`} className="group flex items-center gap-2.5">
-                  <span
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold"
-                    style={{ background: "var(--surface-2)", color: "var(--text-secondary)" }}
-                  >
-                    {chain.name.charAt(0).toUpperCase()}
-                  </span>
+                  <ChainIcon name={chain.name} size={24} />
                   <span
                     className="font-medium transition-colors group-hover:text-[var(--accent)]"
                     style={{ color: "var(--text-primary)" }}

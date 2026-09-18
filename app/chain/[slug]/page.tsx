@@ -4,6 +4,7 @@ import { Coins, CurrencyCircleDollar } from "@phosphor-icons/react/ssr";
 import { getChainDetail } from "@/lib/chains";
 import { TrendChart } from "@/components/TrendChart";
 import { StatTile } from "@/components/StatTile";
+import { ChainIcon } from "@/components/ChainIcon";
 import { formatUsdCompact } from "@/lib/format";
 
 export const revalidate = 900;
@@ -51,7 +52,8 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
         >
           Rank #{chain.rank} by TVL
         </span>
-        <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "var(--text-primary)" }}>
+        <h1 className="flex items-center gap-3 text-2xl font-semibold tracking-tight" style={{ color: "var(--text-primary)" }}>
+          <ChainIcon name={chain.name} size={32} />
           {chain.name}
         </h1>
       </div>
