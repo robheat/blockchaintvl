@@ -4,7 +4,9 @@ import { TrendDown, TrendUp } from "@phosphor-icons/react/ssr";
 import { getFlowChangeMetrics, WINDOWS, type Window, type FlowMetric } from "@/lib/chains";
 import { computeReallocation } from "@/lib/flows";
 import { FlowSankey } from "@/components/FlowSankey";
+import { JsonLd } from "@/components/JsonLd";
 import { formatUsdCompact } from "@/lib/format";
+import { breadcrumbSchema } from "@/lib/schema";
 
 export const revalidate = 900;
 
@@ -15,6 +17,12 @@ const flowsDescription =
 export const metadata: Metadata = {
   title: flowsTitle,
   description: flowsDescription,
+  alternates: {
+    // Canonical to the bare /flows URL: the window/metric query params
+    // produce several near-duplicate URLs for the same underlying page,
+    // and we want ranking signal consolidated on one of them.
+    canonical: "/flows",
+  },
   openGraph: { title: flowsTitle, description: flowsDescription },
   twitter: { card: "summary_large_image", title: flowsTitle, description: flowsDescription },
 };
@@ -135,6 +143,13 @@ export default async function FlowsPage({
           </div>
         </div>
       </div>
+
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Dashboard", url: "https://www.chaintvl.com/" },
+          { name: "Cross-Chain Flows", url: "https://www.chaintvl.com/flows" },
+        ])}
+      />
     </div>
   );
 }

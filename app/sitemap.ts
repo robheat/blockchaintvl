@@ -8,6 +8,7 @@ const BASE_URL = "https://www.chaintvl.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const chains = await getChains().catch(() => []);
+  const now = new Date();
 
   const seenSlugs = new Set<string>();
   const chainEntries: MetadataRoute.Sitemap = [];
@@ -19,6 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     seenSlugs.add(slug);
     chainEntries.push({
       url: `${BASE_URL}/chain/${slug}`,
+      lastModified: now,
       changeFrequency: "hourly",
       priority: 0.6,
     });
@@ -27,11 +29,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: BASE_URL,
+      lastModified: now,
       changeFrequency: "hourly",
       priority: 1,
     },
     {
       url: `${BASE_URL}/flows`,
+      lastModified: now,
       changeFrequency: "hourly",
       priority: 0.8,
     },

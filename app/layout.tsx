@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ArrowsLeftRight, ChartBar } from "@phosphor-icons/react/ssr";
+import { JsonLd } from "@/components/JsonLd";
+import { organizationSchema, websiteSchema } from "@/lib/schema";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,6 +27,9 @@ export const metadata: Metadata = {
     template: "%s | ChainTVL",
   },
   description: siteDescription,
+  alternates: {
+    canonical: "/",
+  },
   keywords: [
     "TVL tracker",
     "total value locked",
@@ -60,6 +65,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <JsonLd data={[organizationSchema(), websiteSchema()]} />
         <header
           className="border-b sticky top-0 z-10 backdrop-blur-md"
           style={{ borderColor: "var(--gridline)", background: "rgba(8, 9, 11, 0.72)" }}

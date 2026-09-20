@@ -1,13 +1,29 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Coins, CurrencyCircleDollar } from "@phosphor-icons/react/ssr";
-import { getChainDetail } from "@/lib/chains";
+import { getChainDetail, type ChainDetail } from "@/lib/chains";
 import { TrendChart } from "@/components/TrendChart";
 import { StatTile } from "@/components/StatTile";
 import { ChainIcon } from "@/components/ChainIcon";
-import { formatUsdCompact } from "@/lib/format";
+import { JsonLd } from "@/components/JsonLd";
+import { formatPercent, formatUsdCompact } from "@/lib/format";
+import { breadcrumbSchema, chainDatasetSchema } from "@/lib/schema";
 
 export const revalidate = 900;
+
+const SITE_URL = "https://www.chaintvl.com";
+
+function buildSummary(chain: ChainDetail): string {
+  const stablecoinPart =
+    chain.stablecoinSupply > 0 ? ` and ${formatUsdCompact(chain.stablecoinSupply)} in stablecoin supply` : "";
+  const change7d = chain.tvlChange["7d"];
+  const trendPart =
+    change7d !== null
+      ? ` Over the past 7 days, its TVL is ${change7d >= 0 ? "up" : "down"} ${formatPercent(Math.abs(change7d), { signed: false })}.`
+      : "";
+  return `${chain.name} ranks #${chain.rank} by total value locked among blockchains DefiLlama tracks, with ${formatUsdCompact(chain.tvl)} in TVL${stablecoinPart}.${trendPart}`;
+}
 
 export async function generateMetadata({
   params,
@@ -21,15 +37,15 @@ export async function generateMetadata({
     return { title: "Chain not found" };
   }
 
-  const stablecoinPart =
-    chain.stablecoinSupply > 0 ? `and ${formatUsdCompact(chain.stablecoinSupply)} in stablecoin supply ` : "";
-  const description = `${chain.name} has ${formatUsdCompact(chain.tvl)} in total value locked (rank #${chain.rank} by TVL) ${stablecoinPart}right now. See ${chain.name}'s historical TVL and stablecoin supply trends on ChainTVL.`;
-
   const title = `${chain.name} TVL`;
+  const description = `${buildSummary(chain)} See ${chain.name}'s historical TVL and stablecoin supply trends on ChainTVL.`;
 
   return {
     title,
     description,
+    alternates: {
+      canonical: `/chain/${chain.slug}`,
+    },
     openGraph: { title, description },
     twitter: { card: "summary_large_image", title, description },
   };
@@ -43,8 +59,19 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
     notFound();
   }
 
+  const chainUrl = `${SITE_URL}/chain/${chain.slug}`;
+  const summary = buildSummary(chain);
+
   return (
     <div className="flex flex-col gap-8">
+      <nav className="flex items-center gap-1.5 text-sm" style={{ color: "var(--text-muted)" }} aria-label="Breadcrumb">
+        <Link href="/" className="transition-colors hover:text-[var(--text-primary)]">
+          Dashboard
+        </Link>
+        <span>/</span>
+        <span style={{ color: "var(--text-secondary)" }}>{chain.name}</span>
+      </nav>
+
       <div>
         <span
           className="inline-block text-xs font-medium px-2 py-0.5 rounded-full mb-2"
@@ -56,6 +83,9 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
           <ChainIcon name={chain.name} size={32} />
           {chain.name}
         </h1>
+        <p className="text-sm mt-2 max-w-2xl leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+          {summary}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -93,6 +123,16 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
           </div>
         </div>
       )}
+
+      <JsonLd
+        data={[
+          breadcrumbSchema([
+            { name: "Dashboard", url: `${SITE_URL}/` },
+            { name: chain.name, url: chainUrl },
+          ]),
+          chainDatasetSchema({ chainName: chain.name, url: chainUrl, description: summary }),
+        ]}
+      />
     </div>
   );
 }

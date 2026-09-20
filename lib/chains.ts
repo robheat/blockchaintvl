@@ -30,6 +30,7 @@ export interface ChainDetail {
   stablecoinSupply: number;
   tvlHistory: TvlPoint[];
   stablecoinHistory: StablecoinPoint[];
+  tvlChange: Record<Window, number | null>;
 }
 
 export type FlowMetric = "tvl" | "stablecoin";
@@ -126,6 +127,11 @@ export async function getChainDetail(slug: string): Promise<ChainDetail | null> 
     stablecoinSupply: stableMatch?.totalCirculatingUSD ?? 0,
     tvlHistory,
     stablecoinHistory,
+    tvlChange: {
+      "24h": fractionalChangeOverWindow(tvlHistory, WINDOW_DAYS["24h"]),
+      "7d": fractionalChangeOverWindow(tvlHistory, WINDOW_DAYS["7d"]),
+      "30d": fractionalChangeOverWindow(tvlHistory, WINDOW_DAYS["30d"]),
+    },
   };
 }
 

@@ -3,9 +3,34 @@ import { getGlobalTvlHistory } from "@/lib/defillama";
 import { getTopChainSummaries } from "@/lib/chains";
 import { StatTile } from "@/components/StatTile";
 import { ChainTable } from "@/components/ChainTable";
+import { JsonLd } from "@/components/JsonLd";
 import { formatUsdCompact } from "@/lib/format";
+import { faqSchema } from "@/lib/schema";
 
 export const revalidate = 300;
+
+const FAQS = [
+  {
+    question: "What is TVL (total value locked)?",
+    answer:
+      "TVL is the total dollar value of crypto assets deposited in a blockchain's DeFi protocols: lending markets, DEX liquidity pools, staking contracts, and similar. It's the standard measure of how much capital is actively used on a chain, as opposed to a token's market cap, which measures the value of the token supply itself.",
+  },
+  {
+    question: "How are the cross-chain flows on this site calculated?",
+    answer:
+      "The Flows page takes each chain's net change in TVL or stablecoin supply over a chosen window, then models a reallocation: chains that lost share are treated as sources, chains that gained share as targets, and link widths are proportional to each chain's share of the total outflow and inflow. This is not literal bridge-transaction data. DefiLlama's real bridge-volume API now requires a paid plan, so this is a modeled estimate built from public TVL and stablecoin-supply data instead.",
+  },
+  {
+    question: "Where does ChainTVL's data come from?",
+    answer:
+      "All figures come from DefiLlama's free public APIs: chain-level TVL from api.llama.fi, and stablecoin circulating supply per chain from stablecoins.llama.fi. ChainTVL doesn't run its own indexers or collect on-chain data directly.",
+  },
+  {
+    question: "How often is the data updated?",
+    answer:
+      "The dashboard refreshes every 5 minutes, and the flows and individual chain pages refresh every 15 minutes.",
+  },
+];
 
 function referenceAtDaysAgo(
   history: { date: number; tvl: number }[],
@@ -83,6 +108,29 @@ export default async function DashboardPage() {
         </h2>
         <ChainTable chains={chains} />
       </div>
+
+      <div>
+        <h2 className="text-lg font-semibold mb-3" style={{ color: "var(--text-primary)" }}>
+          Frequently asked questions
+        </h2>
+        <div className="flex flex-col gap-3">
+          {FAQS.map((faq) => (
+            <details key={faq.question} className="viz-card p-4 group">
+              <summary
+                className="cursor-pointer list-none font-medium marker:content-none"
+                style={{ color: "var(--text-primary)" }}
+              >
+                {faq.question}
+              </summary>
+              <p className="text-sm mt-2 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                {faq.answer}
+              </p>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <JsonLd data={faqSchema(FAQS)} />
     </div>
   );
 }
