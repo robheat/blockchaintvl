@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ArrowsLeftRight, ChartBar } from "@phosphor-icons/react/ssr";
 import { JsonLd } from "@/components/JsonLd";
@@ -58,6 +59,8 @@ export const viewport: Viewport = {
   themeColor: "#08090b",
 };
 
+const GA_MEASUREMENT_ID = "G-DFQYJYCDKL";
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -65,6 +68,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
+        <Script id="ga-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
         <header
           className="border-b sticky top-0 z-10 backdrop-blur-md"
