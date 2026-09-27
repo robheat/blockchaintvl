@@ -41,6 +41,23 @@ export interface ChainMetricChange {
   current: number;
 }
 
+export interface ChainPickerEntry {
+  name: string;
+  slug: string;
+  tvl: number;
+}
+
+export interface ChainComparisonSeries {
+  name: string;
+  slug: string;
+  tvl: number;
+  tvlChange: Record<Window, number | null>;
+  tvlHistory: TvlPoint[];
+}
+
+export const COMPARE_MAX_CHAINS = 3;
+export const COMPARE_PICKER_LIMIT = 60;
+
 function normalize(name: string): string {
   return name.trim().toLowerCase();
 }
@@ -133,6 +150,45 @@ export async function getChainDetail(slug: string): Promise<ChainDetail | null> 
       "30d": fractionalChangeOverWindow(tvlHistory, WINDOW_DAYS["30d"]),
     },
   };
+}
+
+/** Chains available to pick for comparison, by current TVL. */
+export async function getChainPickerList(limit = COMPARE_PICKER_LIMIT): Promise<ChainPickerEntry[]> {
+  const chains = await getChains();
+  return [...chains]
+    .filter((c) => c.tvl > 0)
+    .sort((a, b) => b.tvl - a.tvl)
+    .slice(0, limit)
+    .map((c) => ({ name: c.name, slug: toSlug(c.name), tvl: c.tvl }));
+}
+
+/** TVL history for a specific set of chain slugs, for the comparison chart. */
+export async function getChainsForComparison(slugs: string[]): Promise<ChainComparisonSeries[]> {
+  const chains = await getChains();
+  const bySlug = new Map(chains.map((c) => [toSlug(c.name), c]));
+
+  const matched = slugs
+    .map((slug) => bySlug.get(slug))
+    .filter((c): c is NonNullable<typeof c> => !!c);
+
+  const histories = await Promise.all(
+    matched.map((c) => getChainTvlHistory(c.name).catch(() => [] as TvlPoint[]))
+  );
+
+  return matched.map((chain, i) => {
+    const history = histories[i];
+    return {
+      name: chain.name,
+      slug: toSlug(chain.name),
+      tvl: chain.tvl,
+      tvlChange: {
+        "24h": fractionalChangeOverWindow(history, WINDOW_DAYS["24h"]),
+        "7d": fractionalChangeOverWindow(history, WINDOW_DAYS["7d"]),
+        "30d": fractionalChangeOverWindow(history, WINDOW_DAYS["30d"]),
+      },
+      tvlHistory: history,
+    };
+  });
 }
 
 /**

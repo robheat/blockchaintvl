@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ArrowsLeftRight, ChartBar } from "@phosphor-icons/react/ssr";
+import { ArrowsLeftRight, ChartBar, Scales } from "@phosphor-icons/react/ssr";
 import { JsonLd } from "@/components/JsonLd";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
 import "./globals.css";
@@ -82,8 +82,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           className="border-b sticky top-0 z-10 backdrop-blur-md"
           style={{ borderColor: "var(--gridline)", background: "rgba(8, 9, 11, 0.72)" }}
         >
-          <nav className="max-w-6xl mx-auto flex items-center gap-8 px-6 py-3.5">
-            <Link href="/" className="flex items-center gap-2">
+          <nav className="max-w-6xl mx-auto flex items-center gap-4 sm:gap-8 px-4 sm:px-6 py-3.5">
+            <Link href="/" className="flex items-center gap-2 shrink-0">
               <span
                 className="flex h-7 w-7 items-center justify-center rounded-lg"
                 style={{ background: "var(--accent-wash)" }}
@@ -94,14 +94,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 Chain<span style={{ color: "var(--accent)" }}>TVL</span>
               </span>
             </Link>
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-3 sm:gap-5">
               <Link
                 href="/"
                 className="flex items-center gap-1.5 text-sm transition-colors hover:text-[var(--text-primary)]"
                 style={{ color: "var(--text-secondary)" }}
               >
                 <ChartBar size={15} weight="bold" />
-                Dashboard
+                <span className="hidden sm:inline">Dashboard</span>
               </Link>
               <Link
                 href="/flows"
@@ -109,7 +109,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 style={{ color: "var(--text-secondary)" }}
               >
                 <ArrowsLeftRight size={15} weight="bold" />
-                Flows
+                <span className="hidden sm:inline">Flows</span>
+              </Link>
+              <Link
+                href="/compare"
+                className="flex items-center gap-1.5 text-sm transition-colors hover:text-[var(--text-primary)]"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                <Scales size={15} weight="bold" />
+                <span className="hidden sm:inline">Compare</span>
               </Link>
             </div>
           </nav>

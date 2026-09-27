@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { TrendDown, TrendUp } from "@phosphor-icons/react/ssr";
 import { getFlowChangeMetrics, WINDOWS, type Window, type FlowMetric } from "@/lib/chains";
 import { computeReallocation } from "@/lib/flows";
 import { FlowSankey } from "@/components/FlowSankey";
+import { FilterPill } from "@/components/FilterPill";
 import { JsonLd } from "@/components/JsonLd";
 import { formatUsdCompact } from "@/lib/format";
 import { breadcrumbSchema } from "@/lib/schema";
@@ -38,31 +38,6 @@ function isWindow(value: string | undefined): value is Window {
 
 function isMetric(value: string | undefined): value is FlowMetric {
   return value === "tvl" || value === "stablecoin";
-}
-
-function FilterPill({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
-  return (
-    <Link
-      href={href}
-      className="text-sm px-3.5 py-1.5 rounded-full border transition-colors"
-      style={
-        active
-          ? {
-              borderColor: "var(--accent)",
-              color: "var(--text-primary)",
-              background: "var(--accent-wash)",
-              fontWeight: 600,
-            }
-          : {
-              borderColor: "var(--border-hairline)",
-              color: "var(--text-secondary)",
-              background: "var(--surface-1)",
-            }
-      }
-    >
-      {children}
-    </Link>
-  );
 }
 
 export default async function FlowsPage({
