@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Coins, CurrencyCircleDollar } from "@phosphor-icons/react/ssr";
+import { ArrowSquareOut, Coins, CurrencyCircleDollar } from "@phosphor-icons/react/ssr";
 import { getChainDetail, type ChainDetail } from "@/lib/chains";
+import { getTopProtocolsForChain } from "@/lib/protocols";
 import { TrendChart } from "@/components/TrendChart";
 import { StatTile } from "@/components/StatTile";
 import { ChainIcon } from "@/components/ChainIcon";
+import { ProtocolIcon } from "@/components/ProtocolIcon";
 import { JsonLd } from "@/components/JsonLd";
 import { formatPercent, formatUsdCompact } from "@/lib/format";
 import { breadcrumbSchema, chainDatasetSchema } from "@/lib/schema";
@@ -61,6 +63,7 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
 
   const chainUrl = `${SITE_URL}/chain/${chain.slug}`;
   const summary = buildSummary(chain);
+  const topProtocols = await getTopProtocolsForChain(chain.name);
 
   return (
     <div className="flex flex-col gap-8">
@@ -96,6 +99,82 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
           value={chain.stablecoinSupply > 0 ? formatUsdCompact(chain.stablecoinSupply) : "No data"}
         />
       </div>
+
+      {topProtocols.length > 0 && (
+        <div>
+          <h2 className="text-lg font-semibold mb-3" style={{ color: "var(--text-primary)" }}>
+            Top protocols on {chain.name}
+          </h2>
+          <div className="viz-card overflow-x-auto">
+            <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid var(--gridline)", background: "var(--surface-2)" }}>
+                  <th
+                    className="py-2.5 px-3 text-left text-xs font-medium uppercase tracking-wide"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    Protocol
+                  </th>
+                  <th
+                    className="py-2.5 px-3 text-left text-xs font-medium uppercase tracking-wide"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    Category
+                  </th>
+                  <th
+                    className="py-2.5 px-3 text-right text-xs font-medium uppercase tracking-wide"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    TVL on {chain.name}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {topProtocols.map((protocol) => (
+                  <tr key={protocol.slug} style={{ borderBottom: "1px solid var(--gridline)" }}>
+                    <td className="py-3 px-3">
+                      {protocol.url ? (
+                        <a
+                          href={protocol.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group flex items-center gap-2.5"
+                        >
+                          <ProtocolIcon name={protocol.name} logo={protocol.logo} size={22} />
+                          <span
+                            className="font-medium transition-colors group-hover:text-[var(--accent)]"
+                            style={{ color: "var(--text-primary)" }}
+                          >
+                            {protocol.name}
+                          </span>
+                          <ArrowSquareOut
+                            size={13}
+                            className="opacity-0 transition-opacity group-hover:opacity-100"
+                            style={{ color: "var(--text-muted)" }}
+                          />
+                        </a>
+                      ) : (
+                        <span className="flex items-center gap-2.5">
+                          <ProtocolIcon name={protocol.name} logo={protocol.logo} size={22} />
+                          <span className="font-medium" style={{ color: "var(--text-primary)" }}>
+                            {protocol.name}
+                          </span>
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-3 px-3" style={{ color: "var(--text-secondary)" }}>
+                      {protocol.category}
+                    </td>
+                    <td className="py-3 px-3 text-right tabular-nums" style={{ color: "var(--text-primary)" }}>
+                      {formatUsdCompact(protocol.tvl)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       <div>
         <h2 className="text-lg font-semibold mb-3" style={{ color: "var(--text-primary)" }}>

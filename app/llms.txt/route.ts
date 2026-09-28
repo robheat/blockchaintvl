@@ -14,7 +14,7 @@ ChainTVL pulls live, free-tier data from DefiLlama: chain-level TVL history (api
 
 ## Chain pages
 
-Every blockchain DefiLlama tracks with nonzero TVL has its own page at \`/chain/{slug}\` (e.g. \`${BASE_URL}/chain/ethereum\`, \`${BASE_URL}/chain/solana\`), with current TVL, TVL rank, stablecoin supply, a plain-language summary sentence, and historical TVL/stablecoin charts. Each chain page also publishes \`BreadcrumbList\` and \`Dataset\` JSON-LD. The full, current list of chain pages is in the sitemap.
+Every blockchain DefiLlama tracks with nonzero TVL has its own page at \`/chain/{slug}\` (e.g. \`${BASE_URL}/chain/ethereum\`, \`${BASE_URL}/chain/solana\`), with current TVL, TVL rank, stablecoin supply, a plain-language summary sentence, the top DeFi protocols on that chain by TVL (excluding CEX reserves), and historical TVL/stablecoin charts. Each chain page also publishes \`BreadcrumbList\` and \`Dataset\` JSON-LD. The full, current list of chain pages is in the sitemap.
 
 ## Frequently asked questions
 
