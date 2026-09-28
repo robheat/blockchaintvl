@@ -11,7 +11,7 @@ import { toSlug } from "./format";
 export type Window = "24h" | "7d" | "30d";
 export const WINDOWS: Window[] = ["24h", "7d", "30d"];
 export const WINDOW_DAYS: Record<Window, number> = { "24h": 1, "7d": 7, "30d": 30 };
-export const DASHBOARD_TOP_N = 20;
+export const DASHBOARD_TOP_N = 50;
 export const FLOWS_TOP_N = 14;
 
 export interface ChainSummary {

@@ -104,7 +104,7 @@ export default async function DashboardPage() {
 
       <div>
         <h2 className="text-lg font-semibold mb-3" style={{ color: "var(--text-primary)" }}>
-          Chains by TVL
+          Top 50 chains by TVL
         </h2>
         <ChainTable chains={chains} />
       </div>
