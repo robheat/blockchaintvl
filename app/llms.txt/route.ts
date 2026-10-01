@@ -23,6 +23,11 @@ Every blockchain DefiLlama tracks with nonzero TVL has its own page at \`/chain/
 - Where does the data come from? DefiLlama's free public APIs only: chain TVL from api.llama.fi, stablecoin supply from stablecoins.llama.fi.
 - How often is it updated? The dashboard refreshes every 5 minutes; the flows and chain pages refresh every 15 minutes.
 
+## Sister sites (same team)
+
+- [CryptoCatalyst](https://www.cryptocatalyst.news/): Daily crypto news digest. Chain pages for major chains link to that chain's news there.
+- [Token Buybacks](https://www.tokenbuybacks.app/): Daily crypto token buyback tracker. Protocols in a chain's top-protocols table link to their token's buyback page there when one exists.
+
 ## Other
 
 - [Sitemap](${BASE_URL}/sitemap.xml)

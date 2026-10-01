@@ -14,6 +14,8 @@ export interface ChainProtocolSummary {
   tvl: number;
   logo: string | null;
   url: string | null;
+  /** DefiLlama parent, e.g. "parent#uniswap" for uniswap-v3. */
+  parentProtocol: string | null;
 }
 
 interface RawProtocol {
@@ -22,6 +24,7 @@ interface RawProtocol {
   category?: string;
   logo?: string | null;
   url?: string | null;
+  parentProtocol?: string;
   chainTvls?: Record<string, number>;
 }
 
@@ -64,6 +67,7 @@ async function fetchAllProtocolsByChain(): Promise<Record<string, ChainProtocolS
         tvl,
         logo: p.logo ?? null,
         url: p.url ?? null,
+        parentProtocol: p.parentProtocol ?? null,
       });
     }
   }
@@ -75,7 +79,7 @@ async function fetchAllProtocolsByChain(): Promise<Record<string, ChainProtocolS
   return byChain;
 }
 
-const getCachedProtocolsByChain = unstable_cache(fetchAllProtocolsByChain, ["protocols-by-chain"], {
+const getCachedProtocolsByChain = unstable_cache(fetchAllProtocolsByChain, ["protocols-by-chain-v2"], {
   revalidate: 3600,
 });
 

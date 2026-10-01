@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowSquareOut, Coins, CurrencyCircleDollar } from "@phosphor-icons/react/ssr";
+import { ArrowRight, ArrowSquareOut, Coins, CurrencyCircleDollar } from "@phosphor-icons/react/ssr";
 import { getChainDetail, type ChainDetail } from "@/lib/chains";
 import { getTopProtocolsForChain } from "@/lib/protocols";
 import { TrendChart } from "@/components/TrendChart";
@@ -11,6 +11,7 @@ import { ProtocolIcon } from "@/components/ProtocolIcon";
 import { JsonLd } from "@/components/JsonLd";
 import { formatPercent, formatUsdCompact } from "@/lib/format";
 import { breadcrumbSchema, chainDatasetSchema } from "@/lib/schema";
+import { SISTER_SITES, buybackTokenFor, chainNewsUrl, type BuybackToken } from "@/lib/sister-sites";
 
 export const revalidate = 900;
 
@@ -64,6 +65,16 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
   const chainUrl = `${SITE_URL}/chain/${chain.slug}`;
   const summary = buildSummary(chain);
   const topProtocols = await getTopProtocolsForChain(chain.name);
+  const newsUrl = chainNewsUrl(chain.slug);
+  // Badge only the first (largest) row per token: Jupiter alone can fill three rows.
+  const badgedSymbols = new Set<string>();
+  const buybackBySlug = new Map<string, BuybackToken>();
+  for (const protocol of topProtocols) {
+    const buyback = buybackTokenFor(protocol.slug, protocol.parentProtocol);
+    if (!buyback || badgedSymbols.has(buyback.symbol)) continue;
+    badgedSymbols.add(buyback.symbol);
+    buybackBySlug.set(protocol.slug, buyback);
+  }
 
   return (
     <div className="flex flex-col gap-8">
@@ -89,6 +100,16 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
         <p className="text-sm mt-2 max-w-2xl leading-relaxed" style={{ color: "var(--text-secondary)" }}>
           {summary}
         </p>
+        {newsUrl && (
+          <a
+            href={newsUrl}
+            className="inline-flex items-center gap-1.5 text-sm mt-3 transition-colors hover:text-[var(--text-primary)]"
+            style={{ color: "var(--accent)" }}
+          >
+            Latest {chain.name} news on {SISTER_SITES.cryptocatalyst.name}
+            <ArrowRight size={14} weight="bold" />
+          </a>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -130,46 +151,61 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
                 </tr>
               </thead>
               <tbody>
-                {topProtocols.map((protocol) => (
-                  <tr key={protocol.slug} style={{ borderBottom: "1px solid var(--gridline)" }}>
-                    <td className="py-3 px-3">
-                      {protocol.url ? (
-                        <a
-                          href={protocol.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="group flex items-center gap-2.5"
-                        >
-                          <ProtocolIcon name={protocol.name} logo={protocol.logo} size={22} />
-                          <span
-                            className="font-medium transition-colors group-hover:text-[var(--accent)]"
-                            style={{ color: "var(--text-primary)" }}
-                          >
-                            {protocol.name}
-                          </span>
-                          <ArrowSquareOut
-                            size={13}
-                            className="opacity-0 transition-opacity group-hover:opacity-100"
-                            style={{ color: "var(--text-muted)" }}
-                          />
-                        </a>
-                      ) : (
-                        <span className="flex items-center gap-2.5">
-                          <ProtocolIcon name={protocol.name} logo={protocol.logo} size={22} />
-                          <span className="font-medium" style={{ color: "var(--text-primary)" }}>
-                            {protocol.name}
-                          </span>
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3 px-3" style={{ color: "var(--text-secondary)" }}>
-                      {protocol.category}
-                    </td>
-                    <td className="py-3 px-3 text-right tabular-nums" style={{ color: "var(--text-primary)" }}>
-                      {formatUsdCompact(protocol.tvl)}
-                    </td>
-                  </tr>
-                ))}
+                {topProtocols.map((protocol) => {
+                  const buyback = buybackBySlug.get(protocol.slug);
+                  return (
+                    <tr key={protocol.slug} style={{ borderBottom: "1px solid var(--gridline)" }}>
+                      <td className="py-3 px-3">
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                          {protocol.url ? (
+                            <a
+                              href={protocol.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group flex items-center gap-2.5"
+                            >
+                              <ProtocolIcon name={protocol.name} logo={protocol.logo} size={22} />
+                              <span
+                                className="font-medium transition-colors group-hover:text-[var(--accent)]"
+                                style={{ color: "var(--text-primary)" }}
+                              >
+                                {protocol.name}
+                              </span>
+                              <ArrowSquareOut
+                                size={13}
+                                className="opacity-0 transition-opacity group-hover:opacity-100"
+                                style={{ color: "var(--text-muted)" }}
+                              />
+                            </a>
+                          ) : (
+                            <span className="flex items-center gap-2.5">
+                              <ProtocolIcon name={protocol.name} logo={protocol.logo} size={22} />
+                              <span className="font-medium" style={{ color: "var(--text-primary)" }}>
+                                {protocol.name}
+                              </span>
+                            </span>
+                          )}
+                          {buyback && (
+                            <a
+                              href={buyback.url}
+                              title={`${buyback.symbol} buyback history on ${SISTER_SITES.tokenbuybacks.name}`}
+                              className="text-xs font-medium px-2 py-0.5 rounded-full transition-colors hover:text-[var(--text-primary)]"
+                              style={{ color: "var(--accent)", background: "var(--accent-wash)" }}
+                            >
+                              {buyback.symbol} buybacks
+                            </a>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-3 px-3" style={{ color: "var(--text-secondary)" }}>
+                        {protocol.category}
+                      </td>
+                      <td className="py-3 px-3 text-right tabular-nums" style={{ color: "var(--text-primary)" }}>
+                        {formatUsdCompact(protocol.tvl)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

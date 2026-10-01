@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ArrowsLeftRight, ChartBar, Scales } from "@phosphor-icons/react/ssr";
 import { JsonLd } from "@/components/JsonLd";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
+import { SISTER_SITES } from "@/lib/sister-sites";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -129,6 +130,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Data from DefiLlama. TVL and stablecoin-supply figures are free-tier data; cross-chain
           &ldquo;flows&rdquo; are a modeled reallocation, not literal bridge-transaction routes.
+          <p className="mt-2">
+            Also from our team:{" "}
+            {Object.values(SISTER_SITES).map((site, i) => (
+              <span key={site.url}>
+                {i > 0 && " · "}
+                <a
+                  href={site.url}
+                  className="transition-colors hover:text-[var(--text-primary)]"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  {site.name}
+                </a>{" "}
+                ({site.blurb})
+              </span>
+            ))}
+          </p>
         </footer>
       </body>
     </html>
