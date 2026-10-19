@@ -245,7 +245,13 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
             { name: "Dashboard", url: `${SITE_URL}/` },
             { name: chain.name, url: chainUrl },
           ]),
-          chainDatasetSchema({ chainName: chain.name, url: chainUrl, description: summary }),
+          chainDatasetSchema({
+            chainName: chain.name,
+            url: chainUrl,
+            description: summary,
+            tvlHistory: chain.tvlHistory,
+            stablecoinHistory: chain.stablecoinHistory,
+          }),
         ]}
       />
     </div>

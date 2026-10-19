@@ -30,6 +30,8 @@ Every blockchain DefiLlama tracks with nonzero TVL has its own page at \`/chain/
 
 ## Other
 
+- [Privacy Policy](${BASE_URL}/privacy): What is collected on visits (Google Analytics cookies, hosting logs, third-party logo requests). No accounts, forms, or ads.
+- [Terms of Service](${BASE_URL}/terms): Informational use only, not financial advice; data is provided as-is from DefiLlama; cross-chain flows are a modeled estimate.
 - [Sitemap](${BASE_URL}/sitemap.xml)
 - [Robots](${BASE_URL}/robots.txt)
 `;

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getChains } from "@/lib/defillama";
 import { toSlug } from "@/lib/format";
+import { LEGAL_EFFECTIVE_DATE } from "@/lib/legal";
 
 export const revalidate = 3600;
 
@@ -9,6 +10,7 @@ const BASE_URL = "https://www.chaintvl.com";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const chains = await getChains().catch(() => []);
   const now = new Date();
+  const legalModified = new Date(`${LEGAL_EFFECTIVE_DATE}T00:00:00Z`);
 
   const seenSlugs = new Set<string>();
   const chainEntries: MetadataRoute.Sitemap = [];
@@ -44,6 +46,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "hourly",
       priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/privacy`,
+      lastModified: legalModified,
+      changeFrequency: "yearly",
+      priority: 0.2,
+    },
+    {
+      url: `${BASE_URL}/terms`,
+      lastModified: legalModified,
+      changeFrequency: "yearly",
+      priority: 0.2,
     },
     ...chainEntries,
   ];

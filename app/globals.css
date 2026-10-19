@@ -114,6 +114,52 @@ body::before {
   color: var(--text-secondary);
 }
 
+/* Long-form text on /privacy and /terms; Tailwind's preflight strips list and heading styles. */
+.legal-prose h2 {
+  margin-top: 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.legal-prose p,
+.legal-prose li {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.legal-prose h2 + p,
+.legal-prose h2 + ul {
+  margin-top: 0.5rem;
+}
+
+.legal-prose p + p,
+.legal-prose p + ul,
+.legal-prose ul + p {
+  margin-top: 0.75rem;
+}
+
+.legal-prose ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.legal-prose strong {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.legal-prose p a,
+.legal-prose li a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .live-dot {
   display: inline-block;
   width: 6px;

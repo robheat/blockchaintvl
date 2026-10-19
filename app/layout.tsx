@@ -4,7 +4,7 @@ import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ArrowsLeftRight, ChartBar, Scales } from "@phosphor-icons/react/ssr";
 import { JsonLd } from "@/components/JsonLd";
-import { organizationSchema, websiteSchema } from "@/lib/schema";
+import { siteGraphSchema } from "@/lib/schema";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -77,7 +77,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
-        <JsonLd data={[organizationSchema(), websiteSchema()]} />
+        <JsonLd data={siteGraphSchema()} />
         <header
           className="border-b sticky top-0 z-10 backdrop-blur-md"
           style={{ borderColor: "var(--gridline)", background: "rgba(8, 9, 11, 0.72)" }}
@@ -129,6 +129,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Data from DefiLlama. TVL and stablecoin-supply figures are free-tier data; cross-chain
           &ldquo;flows&rdquo; are a modeled reallocation, not literal bridge-transaction routes.
+          <nav aria-label="Legal" className="mt-3 flex items-center justify-center gap-4">
+            <Link href="/privacy" className="transition-colors hover:text-[var(--text-primary)]">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-[var(--text-primary)]">
+              Terms of Service
+            </Link>
+          </nav>
         </footer>
       </body>
     </html>
