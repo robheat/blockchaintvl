@@ -11,6 +11,7 @@ import { ProtocolIcon } from "@/components/ProtocolIcon";
 import { JsonLd } from "@/components/JsonLd";
 import { formatPercent, formatUsdCompact } from "@/lib/format";
 import { breadcrumbSchema, chainDatasetSchema } from "@/lib/schema";
+import { socialMetadata } from "@/lib/seo";
 import { SISTER_SITES, buybackTokenFor, chainNewsUrl, type BuybackToken } from "@/lib/sister-sites";
 
 export const revalidate = 900;
@@ -49,8 +50,7 @@ export async function generateMetadata({
     alternates: {
       canonical: `/chain/${chain.slug}`,
     },
-    openGraph: { title, description },
-    twitter: { card: "summary_large_image", title, description },
+    ...socialMetadata({ title, description, path: `/chain/${chain.slug}` }),
   };
 }
 

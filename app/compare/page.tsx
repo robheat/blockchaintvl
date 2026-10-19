@@ -21,6 +21,7 @@ import { FilterPill } from "@/components/FilterPill";
 import { JsonLd } from "@/components/JsonLd";
 import { formatPercent, formatUsdCompact } from "@/lib/format";
 import { breadcrumbSchema } from "@/lib/schema";
+import { socialMetadata } from "@/lib/seo";
 
 export const revalidate = 900;
 
@@ -34,8 +35,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/compare",
   },
-  openGraph: { title: compareTitle, description: compareDescription },
-  twitter: { card: "summary_large_image", title: compareTitle, description: compareDescription },
+  ...socialMetadata({ title: compareTitle, description: compareDescription, path: "/compare" }),
 };
 
 const SERIES_COLORS = ["var(--series-1)", "var(--series-2)", "var(--series-3)"];

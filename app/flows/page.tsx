@@ -7,6 +7,7 @@ import { FilterPill } from "@/components/FilterPill";
 import { JsonLd } from "@/components/JsonLd";
 import { formatUsdCompact } from "@/lib/format";
 import { breadcrumbSchema } from "@/lib/schema";
+import { socialMetadata } from "@/lib/seo";
 
 export const revalidate = 900;
 
@@ -23,8 +24,7 @@ export const metadata: Metadata = {
     // and we want ranking signal consolidated on one of them.
     canonical: "/flows",
   },
-  openGraph: { title: flowsTitle, description: flowsDescription },
-  twitter: { card: "summary_large_image", title: flowsTitle, description: flowsDescription },
+  ...socialMetadata({ title: flowsTitle, description: flowsDescription, path: "/flows" }),
 };
 
 const METRICS: { key: FlowMetric; label: string }[] = [

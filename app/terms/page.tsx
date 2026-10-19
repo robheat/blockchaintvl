@@ -4,6 +4,7 @@ import { LegalPage } from "@/components/LegalPage";
 import { JsonLd } from "@/components/JsonLd";
 import { CONTACT_EMAIL, LEGAL_EFFECTIVE_DATE } from "@/lib/legal";
 import { breadcrumbSchema, webPageSchema } from "@/lib/schema";
+import { socialMetadata } from "@/lib/seo";
 
 const title = "Terms of Service";
 const description =
@@ -13,8 +14,7 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: "/terms" },
-  openGraph: { title, description },
-  twitter: { card: "summary_large_image", title, description },
+  ...socialMetadata({ title, description, path: "/terms" }),
 };
 
 export default function TermsPage() {
