@@ -9,6 +9,7 @@ ChainTVL pulls live, free-tier data from DefiLlama: chain-level TVL history (api
 ## Pages
 
 - [Dashboard](${BASE_URL}/): Global DeFi TVL, 24h/7d/30d change, and a sortable table of chains by TVL and stablecoin supply.
+- [All Chains](${BASE_URL}/chains): Every chain with nonzero TVL, ranked by TVL, linking to each chain's page. Common alternate names are listed (e.g. OP Mainnet = Optimism, BSC = BNB Chain, Polygon = Matic).
 - [Cross-Chain Flows](${BASE_URL}/flows): A Sankey-style diagram of chains gaining vs. losing TVL or stablecoin share, filterable by 24h/7d/30d.
 - [Compare Chains](${BASE_URL}/compare): Pick up to three chains and overlay their TVL trends, indexed to percent change since the start of the range (or raw TVL) over 30d/90d/1y/all time.
 

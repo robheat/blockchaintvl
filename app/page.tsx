@@ -1,6 +1,7 @@
-import { Coins, CurrencyCircleDollar, TrendUp } from "@phosphor-icons/react/ssr";
+import Link from "next/link";
+import { ArrowRight, Coins, CurrencyCircleDollar, TrendUp } from "@phosphor-icons/react/ssr";
 import { getGlobalTvlHistory } from "@/lib/defillama";
-import { getTopChainSummaries } from "@/lib/chains";
+import { getChainDirectory, getTopChainSummaries } from "@/lib/chains";
 import { StatTile } from "@/components/StatTile";
 import { ChainTable } from "@/components/ChainTable";
 import { JsonLd } from "@/components/JsonLd";
@@ -48,7 +49,12 @@ function referenceAtDaysAgo(
 }
 
 export default async function DashboardPage() {
-  const [globalHistory, chains] = await Promise.all([getGlobalTvlHistory(), getTopChainSummaries()]);
+  const [globalHistory, chains, directory] = await Promise.all([
+    getGlobalTvlHistory(),
+    getTopChainSummaries(),
+    getChainDirectory(),
+  ]);
+  const chainCount = directory.length;
 
   const latestGlobal = globalHistory[globalHistory.length - 1];
   const ref24h = referenceAtDaysAgo(globalHistory, 1);
@@ -107,6 +113,14 @@ export default async function DashboardPage() {
           Top 50 chains by TVL
         </h2>
         <ChainTable chains={chains} />
+        <Link
+          href="/chains"
+          className="inline-flex items-center gap-1.5 text-sm mt-3 transition-colors hover:text-[var(--text-primary)]"
+          style={{ color: "var(--accent)" }}
+        >
+          View all {chainCount} chains by TVL
+          <ArrowRight size={14} weight="bold" />
+        </Link>
       </div>
 
       <div>

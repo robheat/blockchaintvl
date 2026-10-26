@@ -152,6 +152,33 @@ export async function getChainDetail(slug: string): Promise<ChainDetail | null> 
   };
 }
 
+export interface ChainDirectoryEntry {
+  name: string;
+  slug: string;
+  tvl: number;
+  rank: number;
+}
+
+/**
+ * Every chain with a live chain page worth listing: nonzero TVL, sorted by TVL,
+ * one entry per slug. The sitemap and the /chains directory both use this so
+ * they always list the same set. Only the single /v2/chains call -- no
+ * per-chain history fetches.
+ */
+export async function getChainDirectory(): Promise<ChainDirectoryEntry[]> {
+  const chains = await getChains();
+  const seen = new Set<string>();
+  const entries: ChainDirectoryEntry[] = [];
+  for (const chain of [...chains].sort((a, b) => b.tvl - a.tvl)) {
+    if (chain.tvl <= 0) continue;
+    const slug = toSlug(chain.name);
+    if (seen.has(slug)) continue;
+    seen.add(slug);
+    entries.push({ name: chain.name, slug, tvl: chain.tvl, rank: entries.length + 1 });
+  }
+  return entries;
+}
+
 /** Chains available to pick for comparison, by current TVL. */
 export async function getChainPickerList(limit = COMPARE_PICKER_LIMIT): Promise<ChainPickerEntry[]> {
   const chains = await getChains();

@@ -7,6 +7,42 @@ const PROTOCOLS_API = "https://api.llama.fi/protocols";
 const EXCLUDED_CATEGORIES = new Set(["CEX"]);
 const TOP_N_PER_CHAIN = 8;
 
+/**
+ * /protocols keys chainTvls by DefiLlama's older internal chain names, while
+ * /v2/chains (which our chain pages use) has the current display names. Without
+ * this, these chains -- BSC and OP Mainnet among them -- matched no protocols.
+ * Each pair was checked against matching TVL and the chain's known top protocols.
+ * Key: name in /protocols chainTvls. Value: name in /v2/chains.
+ */
+const PROTOCOL_KEY_TO_CHAIN_NAME = new Map<string, string>(
+  Object.entries({
+    Binance: "BSC",
+    Optimism: "OP Mainnet",
+    xDai: "Gnosis",
+    RSK: "Rootstock",
+    HydraDX: "Hydration",
+    Proton: "XPR Network",
+    Pulse: "PulseChain",
+    EOS: "Vaulta",
+    Ripple: "XRPL",
+    Thorchain: "THORChain",
+    Strato: "Strato Chain",
+    "zkSync Era": "ZKsync Era",
+    Elrond: "MultiversX",
+    "Reya Network": "ReyaChain",
+    Klaytn: "Kaia",
+    Bitkub: "KUB",
+    Fuel: "Fuel Ignition",
+    WEMIX: "WEMIX3.0",
+    Aleo: "ALEO",
+    Op_Bnb: "opBNB",
+    Map: "MAP Protocol",
+    Terra: "Terra Classic",
+    Mantra: "MANTRA",
+    Persistence: "Persistence One",
+  })
+);
+
 export interface ChainProtocolSummary {
   name: string;
   slug: string;
@@ -56,7 +92,8 @@ async function fetchAllProtocolsByChain(): Promise<Record<string, ChainProtocolS
     if (!p.name || !p.slug || !p.chainTvls) continue;
     if (p.category && EXCLUDED_CATEGORIES.has(p.category)) continue;
 
-    for (const [chainName, tvl] of Object.entries(p.chainTvls)) {
+    for (const [key, tvl] of Object.entries(p.chainTvls)) {
+      const chainName = PROTOCOL_KEY_TO_CHAIN_NAME.get(key) ?? key;
       if (!validChainNames.has(chainName)) continue;
       if (typeof tvl !== "number" || tvl <= 0) continue;
 
@@ -79,9 +116,13 @@ async function fetchAllProtocolsByChain(): Promise<Record<string, ChainProtocolS
   return byChain;
 }
 
-const getCachedProtocolsByChain = unstable_cache(fetchAllProtocolsByChain, ["protocols-by-chain-v2"], {
-  revalidate: 3600,
-});
+// The name map is part of the key so editing it invalidates the cached summary
+// immediately instead of serving the old grouping until the next revalidate.
+const getCachedProtocolsByChain = unstable_cache(
+  fetchAllProtocolsByChain,
+  ["protocols-by-chain-v3", JSON.stringify([...PROTOCOL_KEY_TO_CHAIN_NAME])],
+  { revalidate: 3600 }
+);
 
 export async function getTopProtocolsForChain(chainName: string): Promise<ChainProtocolSummary[]> {
   const byChain = await getCachedProtocolsByChain();

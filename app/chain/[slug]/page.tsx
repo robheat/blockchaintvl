@@ -12,6 +12,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { formatPercent, formatUsdCompact } from "@/lib/format";
 import { breadcrumbSchema, chainDatasetSchema } from "@/lib/schema";
 import { socialMetadata } from "@/lib/seo";
+import { buildChainTitle, chainAlias } from "@/lib/chain-aliases";
 import { SISTER_SITES, buybackTokenFor, chainNewsUrl, type BuybackToken } from "@/lib/sister-sites";
 
 export const revalidate = 900;
@@ -19,6 +20,7 @@ export const revalidate = 900;
 const SITE_URL = "https://www.chaintvl.com";
 
 function buildSummary(chain: ChainDetail): string {
+  const aka = chainAlias(chain.slug)?.aka ?? "";
   const stablecoinPart =
     chain.stablecoinSupply > 0 ? ` and ${formatUsdCompact(chain.stablecoinSupply)} in stablecoin supply` : "";
   const change7d = chain.tvlChange["7d"];
@@ -26,7 +28,7 @@ function buildSummary(chain: ChainDetail): string {
     change7d !== null
       ? ` Over the past 7 days, its TVL is ${change7d >= 0 ? "up" : "down"} ${formatPercent(Math.abs(change7d), { signed: false })}.`
       : "";
-  return `${chain.name} ranks #${chain.rank} by total value locked among blockchains DefiLlama tracks, with ${formatUsdCompact(chain.tvl)} in TVL${stablecoinPart}.${trendPart}`;
+  return `${chain.name}${aka} ranks #${chain.rank} by total value locked among blockchains DefiLlama tracks, with ${formatUsdCompact(chain.tvl)} in TVL${stablecoinPart}.${trendPart}`;
 }
 
 export async function generateMetadata({
@@ -41,7 +43,8 @@ export async function generateMetadata({
     return { title: "Chain not found" };
   }
 
-  const title = `${chain.name} TVL`;
+  const topProtocols = await getTopProtocolsForChain(chain.name);
+  const title = buildChainTitle(chain.name, chain.slug, formatUsdCompact(chain.tvl), topProtocols.length > 0);
   const description = `${buildSummary(chain)} See ${chain.name}'s historical TVL and stablecoin supply trends on ChainTVL.`;
 
   return {
@@ -81,6 +84,10 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
       <nav className="flex items-center gap-1.5 text-sm" style={{ color: "var(--text-muted)" }} aria-label="Breadcrumb">
         <Link href="/" className="transition-colors hover:text-[var(--text-primary)]">
           Dashboard
+        </Link>
+        <span>/</span>
+        <Link href="/chains" className="transition-colors hover:text-[var(--text-primary)]">
+          All chains
         </Link>
         <span>/</span>
         <span style={{ color: "var(--text-secondary)" }}>{chain.name}</span>
@@ -243,6 +250,7 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
         data={[
           breadcrumbSchema([
             { name: "Dashboard", url: `${SITE_URL}/` },
+            { name: "All chains", url: `${SITE_URL}/chains` },
             { name: chain.name, url: chainUrl },
           ]),
           chainDatasetSchema({

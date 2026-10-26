@@ -66,6 +66,21 @@ export function breadcrumbSchema(items: { name: string; url: string }[]) {
   };
 }
 
+export function itemListSchema(opts: { name: string; items: { name: string; url: string }[] }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: opts.name,
+    numberOfItems: opts.items.length,
+    itemListElement: opts.items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      url: item.url,
+    })),
+  };
+}
+
 export function faqSchema(items: { question: string; answer: string }[]) {
   return {
     "@context": "https://schema.org",

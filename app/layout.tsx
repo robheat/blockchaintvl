@@ -129,7 +129,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Data from DefiLlama. TVL and stablecoin-supply figures are free-tier data; cross-chain
           &ldquo;flows&rdquo; are a modeled reallocation, not literal bridge-transaction routes.
-          <nav aria-label="Legal" className="mt-3 flex items-center justify-center gap-4">
+          <nav aria-label="Footer" className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+            <Link href="/chains" className="transition-colors hover:text-[var(--text-primary)]">
+              All chains
+            </Link>
             <Link href="/privacy" className="transition-colors hover:text-[var(--text-primary)]">
               Privacy Policy
             </Link>

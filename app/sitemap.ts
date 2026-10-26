@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getChains } from "@/lib/defillama";
-import { toSlug } from "@/lib/format";
+import { getChainDirectory } from "@/lib/chains";
 import { LEGAL_EFFECTIVE_DATE } from "@/lib/legal";
 
 export const revalidate = 3600;
@@ -8,25 +7,16 @@ export const revalidate = 3600;
 const BASE_URL = "https://www.chaintvl.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const chains = await getChains().catch(() => []);
+  const chains = await getChainDirectory().catch(() => []);
   const now = new Date();
   const legalModified = new Date(`${LEGAL_EFFECTIVE_DATE}T00:00:00Z`);
 
-  const seenSlugs = new Set<string>();
-  const chainEntries: MetadataRoute.Sitemap = [];
-
-  for (const chain of [...chains].sort((a, b) => b.tvl - a.tvl)) {
-    if (chain.tvl <= 0) continue;
-    const slug = toSlug(chain.name);
-    if (seenSlugs.has(slug)) continue;
-    seenSlugs.add(slug);
-    chainEntries.push({
-      url: `${BASE_URL}/chain/${slug}`,
-      lastModified: now,
-      changeFrequency: "hourly",
-      priority: 0.6,
-    });
-  }
+  const chainEntries: MetadataRoute.Sitemap = chains.map((chain) => ({
+    url: `${BASE_URL}/chain/${chain.slug}`,
+    lastModified: now,
+    changeFrequency: "hourly",
+    priority: 0.6,
+  }));
 
   return [
     {
@@ -34,6 +24,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "hourly",
       priority: 1,
+    },
+    {
+      url: `${BASE_URL}/chains`,
+      lastModified: now,
+      changeFrequency: "hourly",
+      priority: 0.8,
     },
     {
       url: `${BASE_URL}/flows`,
