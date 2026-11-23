@@ -179,6 +179,23 @@ export async function getChainDirectory(): Promise<ChainDirectoryEntry[]> {
   return entries;
 }
 
+/**
+ * The chains ranked just above and below `slug` by TVL (3 each side, shifted
+ * at either end of the list so there are always `count`). Gives every chain
+ * page links to other chain pages; without it they're reachable only from
+ * /chains. Empty if `slug` isn't in the directory (e.g. a zero-TVL chain).
+ */
+export async function getSimilarChains(slug: string, count = 6): Promise<ChainDirectoryEntry[]> {
+  const directory = await getChainDirectory();
+  const index = directory.findIndex((c) => c.slug === slug);
+  if (index === -1) return [];
+  const others = directory.length - 1;
+  const take = Math.min(count, others);
+  let start = Math.max(0, index - Math.floor(take / 2));
+  start = Math.min(start, directory.length - (take + 1));
+  return directory.slice(start, start + take + 1).filter((c) => c.slug !== slug);
+}
+
 /** Chains available to pick for comparison, by current TVL. */
 export async function getChainPickerList(limit = COMPARE_PICKER_LIMIT): Promise<ChainPickerEntry[]> {
   const chains = await getChains();

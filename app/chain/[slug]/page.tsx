@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, ArrowSquareOut, Coins, CurrencyCircleDollar } from "@phosphor-icons/react/ssr";
-import { getChainDetail, type ChainDetail } from "@/lib/chains";
+import { COMPARE_PICKER_LIMIT, getChainDetail, getSimilarChains, type ChainDetail } from "@/lib/chains";
 import { getTopProtocolsForChain } from "@/lib/protocols";
 import { TrendChart } from "@/components/TrendChart";
 import { StatTile } from "@/components/StatTile";
@@ -67,8 +67,18 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
 
   const chainUrl = `${SITE_URL}/chain/${chain.slug}`;
   const summary = buildSummary(chain);
-  const topProtocols = await getTopProtocolsForChain(chain.name);
+  const [topProtocols, similarChains] = await Promise.all([
+    getTopProtocolsForChain(chain.name),
+    getSimilarChains(chain.slug),
+  ]);
   const newsUrl = chainNewsUrl(chain.slug);
+  // The compare picker only knows the top COMPARE_PICKER_LIMIT chains; a chain
+  // outside it would be charted with no chip to remove, so only link inside it.
+  const compareWith =
+    chain.rank <= COMPARE_PICKER_LIMIT
+      ? [...similarChains].reverse().find((c) => c.rank < chain.rank) ??
+        similarChains.find((c) => c.rank <= COMPARE_PICKER_LIMIT)
+      : undefined;
   // Badge only the first (largest) row per token: Jupiter alone can fill three rows.
   const badgedSymbols = new Set<string>();
   const buybackBySlug = new Map<string, BuybackToken>();
@@ -242,6 +252,57 @@ export default async function ChainDetailPage({ params }: { params: Promise<{ sl
               color="var(--flow-inflow)"
               washColor="var(--series-tvl-wash)"
             />
+          </div>
+        </div>
+      )}
+
+      {similarChains.length > 0 && (
+        <div>
+          <h2 className="text-lg font-semibold mb-3" style={{ color: "var(--text-primary)" }}>
+            Chains with similar TVL
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {similarChains.map((c) => (
+              <Link
+                key={c.slug}
+                href={`/chain/${c.slug}`}
+                className="viz-card group flex items-center gap-2.5 px-3 py-2.5 transition-colors hover:bg-[var(--surface-2)]"
+              >
+                <span className="w-7 shrink-0 text-right text-xs tabular-nums" style={{ color: "var(--text-muted)" }}>
+                  #{c.rank}
+                </span>
+                <ChainIcon name={c.name} size={20} />
+                <span
+                  className="min-w-0 flex-1 truncate text-sm font-medium transition-colors group-hover:text-[var(--accent)]"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {c.name}
+                </span>
+                <span className="text-sm tabular-nums" style={{ color: "var(--text-secondary)" }}>
+                  {formatUsdCompact(c.tvl)}
+                </span>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+            {compareWith && (
+              <Link
+                href={`/compare?chains=${chain.slug},${compareWith.slug}&range=1y&metric=indexed`}
+                className="inline-flex items-center gap-1.5 transition-colors hover:text-[var(--text-primary)]"
+                style={{ color: "var(--accent)" }}
+              >
+                Compare {chain.name} vs {compareWith.name}
+                <ArrowRight size={14} weight="bold" />
+              </Link>
+            )}
+            <Link
+              href="/chains"
+              className="inline-flex items-center gap-1.5 transition-colors hover:text-[var(--text-primary)]"
+              style={{ color: "var(--accent)" }}
+            >
+              All chains by TVL
+              <ArrowRight size={14} weight="bold" />
+            </Link>
           </div>
         </div>
       )}

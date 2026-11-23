@@ -11,6 +11,7 @@ interface NodeExtra {
   side: "source" | "target";
   value: number;
   synthetic?: boolean;
+  href?: string;
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type LinkExtra = Record<string, any>;
@@ -132,9 +133,17 @@ export function FlowSankey({ nodes, links }: { nodes: FlowNode[]; links: FlowLin
                 onPointerLeave={() => setHovered(null)}
               >
                 <rect x={x0} y={y0} width={Math.max(1, x1 - x0)} height={Math.max(1, y1 - y0)} rx={3} fill={fill} />
-                <text x={labelX} y={(y0 + y1) / 2} dy="0.32em" textAnchor={anchor} className="viz-label" fontSize={12}>
-                  {node.name}
-                </text>
+                {node.href ? (
+                  <a href={node.href} className="sankey-label-link">
+                    <text x={labelX} y={(y0 + y1) / 2} dy="0.32em" textAnchor={anchor} className="viz-label" fontSize={12}>
+                      {node.name}
+                    </text>
+                  </a>
+                ) : (
+                  <text x={labelX} y={(y0 + y1) / 2} dy="0.32em" textAnchor={anchor} className="viz-label" fontSize={12}>
+                    {node.name}
+                  </text>
+                )}
               </g>
             );
           })}

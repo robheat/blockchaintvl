@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { TrendDown, TrendUp } from "@phosphor-icons/react/ssr";
-import { getFlowChangeMetrics, WINDOWS, type Window, type FlowMetric } from "@/lib/chains";
+import { getChainDirectory, getFlowChangeMetrics, WINDOWS, type Window, type FlowMetric } from "@/lib/chains";
 import { computeReallocation } from "@/lib/flows";
 import { FlowSankey } from "@/components/FlowSankey";
 import { FilterPill } from "@/components/FilterPill";
 import { JsonLd } from "@/components/JsonLd";
-import { formatUsdCompact } from "@/lib/format";
+import { formatUsdCompact, toSlug } from "@/lib/format";
 import { breadcrumbSchema } from "@/lib/schema";
 import { socialMetadata } from "@/lib/seo";
 
@@ -49,8 +49,19 @@ export default async function FlowsPage({
   const window: Window = isWindow(params.window) ? params.window : "7d";
   const metric: FlowMetric = isMetric(params.metric) ? params.metric : "tvl";
 
-  const metrics = await getFlowChangeMetrics(window, metric);
-  const { nodes, links, totalOutflow, totalInflow } = computeReallocation(metrics);
+  const [metrics, directory] = await Promise.all([
+    getFlowChangeMetrics(window, metric),
+    getChainDirectory().catch(() => []),
+  ]);
+  const reallocation = computeReallocation(metrics);
+  const { links, totalOutflow, totalInflow } = reallocation;
+  // Stablecoin-mode names come from a different DefiLlama list than chain pages,
+  // so only link a label whose slug is a real chain page.
+  const chainSlugs = new Set(directory.map((c) => c.slug));
+  const nodes = reallocation.nodes.map((n) => {
+    const slug = toSlug(n.name);
+    return !n.synthetic && chainSlugs.has(slug) ? { ...n, href: `/chain/${slug}` } : n;
+  });
 
   return (
     <div className="flex flex-col gap-6">

@@ -11,19 +11,26 @@ import { socialMetadata } from "@/lib/seo";
 export const revalidate = 900;
 
 const SITE_URL = "https://www.chaintvl.com";
-const title = "All Blockchains by TVL";
 const description =
-  "Every blockchain DefiLlama tracks with nonzero total value locked, ranked by TVL, with a page for each chain's TVL history, stablecoin supply and top protocols.";
+  "Full list of every blockchain DefiLlama tracks with nonzero total value locked, ranked by TVL, with a page for each chain's TVL history, stablecoin supply and top protocols.";
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/chains" },
-  ...socialMetadata({ title, description, path: "/chains" }),
-};
+function titleFor(count: number): string {
+  return count > 0 ? `List of All ${count} Blockchains by TVL` : "List of All Blockchains by TVL";
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const title = titleFor((await getChainDirectory().catch(() => [])).length);
+  return {
+    title,
+    description,
+    alternates: { canonical: "/chains" },
+    ...socialMetadata({ title, description, path: "/chains" }),
+  };
+}
 
 export default async function ChainsPage() {
   const chains = await getChainDirectory();
+  const title = titleFor(chains.length);
 
   return (
     <div className="flex flex-col gap-6">

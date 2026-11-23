@@ -6,6 +6,8 @@ export interface FlowNode {
   side: "source" | "target";
   value: number;
   synthetic?: boolean;
+  /** Chain page URL, set by the caller only when the name resolves to a real chain page. */
+  href?: string;
 }
 
 export interface FlowLink {

@@ -93,6 +93,16 @@ body::before {
   fill: var(--text-primary);
 }
 
+.sankey-label-link .viz-label {
+  text-decoration: underline;
+  text-decoration-color: var(--border-hairline);
+  text-underline-offset: 3px;
+}
+
+.sankey-label-link:hover .viz-label {
+  fill: var(--accent);
+}
+
 .viz-tooltip {
   pointer-events: none;
   z-index: 50;

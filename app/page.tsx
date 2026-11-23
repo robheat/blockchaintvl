@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { socialMetadata } from "@/lib/seo";
 import { ArrowRight, Coins, CurrencyCircleDollar, TrendUp } from "@phosphor-icons/react/ssr";
 import { getGlobalTvlHistory } from "@/lib/defillama";
 import { getChainDirectory, getTopChainSummaries } from "@/lib/chains";
@@ -9,6 +11,21 @@ import { formatUsdCompact } from "@/lib/format";
 import { faqSchema } from "@/lib/schema";
 
 export const revalidate = 300;
+
+// title.template from the layout does not apply to a page in the same segment,
+// so the brand suffix is written out here.
+const homeTitle = "Chain TVL Dashboard: Live DeFi TVL by Blockchain | ChainTVL";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const count = (await getChainDirectory().catch(() => [])).length;
+  const description = `Live total value locked (TVL) by chain for ${count || "every"} blockchains: 24h, 7d and 30d TVL change, stablecoin supply, top protocols and cross-chain capital flows for Ethereum, Solana, Base, BSC, Tron and more.`;
+  return {
+    title: { absolute: homeTitle },
+    description,
+    alternates: { canonical: "/" },
+    ...socialMetadata({ title: homeTitle, description, path: "/" }),
+  };
+}
 
 const FAQS = [
   {
